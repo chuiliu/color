@@ -60,10 +60,8 @@ window.onload = function() {
 
         var rule = [2, 3, 4, 5, 5, 6, 6, 7, 7, 8];
         // 根据规则取得行数
-        var row = rule[level - 1];
-        if (level > rule.length) {
-            row = rule[rule.length - 1];
-        }
+        var row = level > rule.length ? rule[rule.length - 1] : rule[level - 1];
+
         console.log('行数', row);
 
         // 总格子数
@@ -80,13 +78,16 @@ window.onload = function() {
             span.className = 'item';
             span.dataset['num'] = j;
             span.style.backgroundColor = color;
-            span.style.width = (Math.floor(100/row - 2*2*row/game.clientWidth)) + '%';
+            span.style.width = (Math.floor(100/row - 3*row*row/game.clientWidth)) + '%';
             span.style.height = span.style.width;
             // 不同的颜色块
             if (j == diffIndex) {
                 span.style.backgroundColor = diffColor;
                 span.addEventListener('click', function() {
                     initGrid(level + 1);
+                    // 计算得分
+                    calcScore(level);
+
                 }, false);
             }
             game.appendChild(span);
@@ -118,6 +119,11 @@ window.onload = function() {
         var s = /\d/.exec(hsl.split(',')[1].trim())[0];
         // 通过调整饱和度来控制颜色
         // var similar = Math.abs()
+    }
+
+    // 计算得分
+    function calcScore(level) {
+        score.innerHTML = level;
     }
 
     window.onresize = function() {
