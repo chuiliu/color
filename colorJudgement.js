@@ -1,6 +1,25 @@
 window.onload = function() {
+
+    var conf = {
+        // 游戏时间
+        totalTime: 10,
+        // 格子数量规则
+        rule: [2, 3, 4, 5, 5, 6, 6, 6, 7, 7, 7, 8],
+        // 色块难度，定义9种难度
+        difficultyLevel: {
+            1: [35, 45],
+            2: [30, 40],
+            3: [25, 35],
+            4: [20, 30],
+            5: [15, 25],
+            6: [10, 20],
+            7: [5, 15],
+            8: [0, 10],
+            9: [0, 5]
+        }
+    };
+
     var timer;
-    var totalTime = 60;
     var recentScore = 0;
 
     var btnStart = document.getElementById('start');
@@ -14,12 +33,8 @@ window.onload = function() {
 
     var result = ['瞎子', '色弱', '色郎', '大色狼'];
 
-    btnStart.addEventListener('click', function(e) {
-        gameStart();
-    }, false);
-    btnRestart.addEventListener('click', function(e) {
-        gameStart();
-    }, false);
+    btnStart.addEventListener('click', gameStart, false);
+    btnRestart.addEventListener('click', gameStart, false);
 
 
     /**
@@ -31,7 +46,7 @@ window.onload = function() {
         gamePanel.style.display = 'block';
         overPanel.style.display = 'none';
         game.style.height = game.clientWidth + 'px';
-        time.innerHTML = totalTime;
+        time.innerHTML = conf.totalTime;
         score.innerHTML = '0';
     }
 
@@ -43,11 +58,9 @@ window.onload = function() {
     function initGrid(level) {
         game.innerHTML = '';
 
-        var rule = [2, 3, 4, 5, 5, 6, 6, 7, 7, 7, 8, 8, 8, 9];
+        var rule = conf.rule;
         // 根据规则取得行数
         var row = level > rule.length ? rule[rule.length - 1] : rule[level - 1];
-
-        // console.log('行数', row);
 
         // 总格子数
         var total = row * row;
@@ -96,9 +109,9 @@ window.onload = function() {
         // 游戏开始
         initGrid(1);
         // 开始计时
-        var timeLeft = totalTime;
+        var timeLeft = conf.totalTime;
         timer = setInterval(function() {
-            timeLeft --;
+            timeLeft--;
             time.innerHTML = timeLeft;
             if (timeLeft < 0) {
                 clearInterval(timer);
@@ -126,7 +139,7 @@ window.onload = function() {
         } else {
             desc = result[0];
         }
-        overPanel.querySelector('.endScore').innerHTML = desc + ' lv: ' + recentScore;
+        overPanel.querySelector('.endScore').innerHTML = desc + ' lv:' + recentScore;
     }
 
     /**
@@ -151,17 +164,7 @@ window.onload = function() {
      */
     function generateSimilarColor(hsl, level) {
         // 定义9种难度
-        var difficultyLevel = {
-            1: [35, 45],
-            2: [30, 40],
-            3: [25, 35],
-            4: [20, 30],
-            5: [15, 25],
-            6: [10, 20],
-            7: [5, 15],
-            8: [0, 10],
-            9: [0, 5]
-        };
+        var difficultyLevel = conf.difficultyLevel;
         // 取出饱和度
         var tempS = hsl.split(',');
         var s = Number(/\d+/.exec(tempS[1].trim())[0]);
@@ -170,9 +173,9 @@ window.onload = function() {
         // 难度呈指数倍增加
         var dl = dl > 9 ? 9 : Math.ceil(Math.sqrt(level) + 1);
         console.log('难度', dl);
+
         var random = Math.random();
         diffS = (s >= 50) ? s - Math.floor(random * 10 + difficultyLevel[dl][1]) : s + Math.floor(random * 10 + difficultyLevel[dl][0]);
-        //
         tempS[1] = diffS + '%';
         var diffHsl = tempS.join(',');
         return diffHsl;
@@ -192,4 +195,5 @@ window.onload = function() {
     window.onresize = function() {
         game.style.height = game.clientWidth + 'px';
     };
+
 };
