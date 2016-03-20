@@ -74,7 +74,8 @@ window.onload = function() {
             var margin = 100 * 1 / game.clientWidth + '%';
             var width = 100 * ((game.clientWidth - (row - 1) * 1) / row) / game.clientWidth + '%';
             span.className = 'grid';
-            span.dataset['num'] = j;
+            // span.dataset['num'] = j;
+            span.dataset ? span.dataset['num'] = j : span['data-num'] = j;
             span.style.backgroundColor = color;
             span.style.width = width;
             span.style.height = width;
