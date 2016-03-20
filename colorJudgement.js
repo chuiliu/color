@@ -64,7 +64,6 @@ window.onload = function() {
 
         // 总格子数
         var total = row * row;
-        // console.log(total);
         var color = getRandomColor();
         var diffColor = generateSimilarColor(color, level);
         // 生成一个[1-total]之间的随机数
@@ -76,8 +75,6 @@ window.onload = function() {
             span.className = 'grid';
             span.dataset['num'] = j;
             span.style.backgroundColor = color;
-            // span.style.width = ((game.clientWidth - (row - 1) * 1) / row) + 'px';
-            // span.style.width = 100 * ((game.clientWidth - (row - 1) * 1) / row) / game.clientWidth + '%';
             span.style.width = width;
             span.style.height = width;
             span.style.marginRight = margin;
@@ -129,7 +126,6 @@ window.onload = function() {
         gamePanel.style.display = 'none';
         overPanel.style.display = 'block';
         var desc = '';
-        // var s = score.innerHTML;
         if (recentScore >= 30) {
             desc = result[3];
         } else if (recentScore >= 20) {
