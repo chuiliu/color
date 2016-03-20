@@ -2,7 +2,7 @@ window.onload = function() {
 
     var conf = {
         // 游戏时间
-        totalTime: 20,
+        totalTime: 60,
         // 格子数量规则
         rule: [2, 3, 4, 5, 5, 6, 6, 6, 7, 7, 7, 8],
         // 色块难度，定义9种难度
