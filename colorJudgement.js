@@ -1,6 +1,8 @@
 window.onload = function() {
     var timer;
-    var totalTime = 300;
+    var totalTime = 60;
+    var recentScore = 0;
+
     var btnStart = document.getElementById('start');
     var btnRestart = document.getElementById('restart');
     var beginPanel = document.querySelector('.game-begin');
@@ -10,15 +12,8 @@ window.onload = function() {
     var score = document.querySelector('.score');
     var time = document.querySelector('.time');
 
-    var result = ['瞎子', '色郎', '大色狼'];
+    var result = ['瞎子', '色弱', '色郎', '大色狼'];
 
-    // 暂时的
-    beginPanel.style.display = 'block';
-    gamePanel.style.display = 'none';
-    // init();
-    // initGrid(1);
-
-    //
     btnStart.addEventListener('click', function(e) {
         gameStart();
     }, false);
@@ -27,14 +22,15 @@ window.onload = function() {
     }, false);
 
 
-    // 初始化
+    /**
+     * 初始化
+     * @return {[type]} [description]
+     */
     function init() {
         beginPanel.style.display = 'none';
         gamePanel.style.display = 'block';
         overPanel.style.display = 'none';
-        var width = game.clientWidth;
-        game.style.height = width + 'px';
-        // game.style.height = game.offsetWidth + 'px';
+        game.style.height = game.clientWidth + 'px';
         time.innerHTML = totalTime;
         score.innerHTML = '0';
     }
@@ -62,14 +58,13 @@ window.onload = function() {
         var diffIndex = Math.floor(Math.random() * total) + 1;
         for (var j = 1; j <= total; j ++) {
             var span = document.createElement('span');
-            var margin = 100 * 2 / game.clientWidth + '%';
-            var width = 100 * ((game.clientWidth - (row - 1) * 2) / row) / game.clientWidth + '%';
+            var margin = 100 * 1 / game.clientWidth + '%';
+            var width = 100 * ((game.clientWidth - (row - 1) * 1) / row) / game.clientWidth + '%';
             span.className = 'grid';
             span.dataset['num'] = j;
             span.style.backgroundColor = color;
-            // span.style.width = (Math.floor(100/row - 3*row*row/game.clientWidth)) + '%';
-            // span.style.width = ((game.clientWidth - (row - 1) * 2) / row) + 'px';
-            // span.style.width = 100 * ((game.clientWidth - (row - 1) * 2) / row) / game.clientWidth + '%';
+            // span.style.width = ((game.clientWidth - (row - 1) * 1) / row) + 'px';
+            // span.style.width = 100 * ((game.clientWidth - (row - 1) * 1) / row) / game.clientWidth + '%';
             span.style.width = width;
             span.style.height = width;
             span.style.marginRight = margin;
@@ -78,7 +73,6 @@ window.onload = function() {
                 span.style.marginRight = '0px';
             }
             if (j > (total - row)) {
-                console.log('>>',j)
                 span.style.marginBottom = '0px';
             }
             // 不同的颜色块
@@ -86,16 +80,17 @@ window.onload = function() {
                 span.style.backgroundColor = diffColor;
                 span.addEventListener('click', function() {
                     initGrid(level + 1);
-                    // 计算得分
                     calcScore(level);
                 }, false);
             }
             game.appendChild(span);
         }
-
     }
 
-    // 游戏开始
+    /**
+     * 游戏开始
+     * @return {[type]} [description]
+     */
     function gameStart() {
         init();
         // 游戏开始
@@ -113,16 +108,31 @@ window.onload = function() {
         }, 1000);
     }
 
-    // 游戏结束
+    /**
+     * 游戏结束
+     * @return {[type]} [description]
+     */
     function gameOver() {
         gamePanel.style.display = 'none';
         overPanel.style.display = 'block';
-        console.log(Number(score.innerHTML));
-        var desc = score.innerHTML < 20 ? result[0] : (score.innerHTML > 30 ? result[2] : result[1]);
-        overPanel.querySelector('.endScore').innerHTML = desc + ' lv: ' + score.innerHTML;
+        var desc = '';
+        // var s = score.innerHTML;
+        if (recentScore >= 30) {
+            desc = result[3];
+        } else if (recentScore >= 20) {
+            desc = result[2];
+        } else if (recentScore >= 10) {
+            desc = result[1];
+        } else {
+            desc = result[0];
+        }
+        overPanel.querySelector('.endScore').innerHTML = desc + ' lv: ' + recentScore;
     }
 
-    // 生成随机颜色
+    /**
+     * 生成随机颜色
+     * @return {String} [hsl颜色]
+     */
     function getRandomColor() {
         // 色相 0 ~ 360
         var h = Math.floor(Math.random() * 361);
@@ -133,7 +143,12 @@ window.onload = function() {
         return 'hsl(' + h + ',' + s + ',' + l + ')';
     }
 
-    // 生成相近颜色
+    /**
+     * 生成相似颜色
+     * @param  {[type]} hsl   [根据的hsl颜色]
+     * @param  {[type]} level [游戏进行到的级别，level >= 1]
+     * @return {[type]}       [hsl颜色字符串]
+     */
     function generateSimilarColor(hsl, level) {
         // 定义9种难度
         var difficultyLevel = {
@@ -148,27 +163,30 @@ window.onload = function() {
             9: [0, 5]
         };
         // 取出饱和度
-        var temp = hsl.split(',');
-        var s = Number(/\d+/.exec(temp[1].trim())[0]);
+        var tempS = hsl.split(',');
+        var s = Number(/\d+/.exec(tempS[1].trim())[0]);
         var diffS;
         // 通过调整饱和度来控制颜色
         // 难度呈指数倍增加
-        var dl = Math.ceil(Math.sqrt(level) + 1);
-        if (dl > 9) {
-            dl = 9;
-        }
+        var dl = dl > 9 ? 9 : Math.ceil(Math.sqrt(level) + 1);
         console.log('难度', dl);
         var random = Math.random();
         diffS = (s >= 50) ? s - Math.floor(random * 10 + difficultyLevel[dl][1]) : s + Math.floor(random * 10 + difficultyLevel[dl][0]);
         //
-        temp[1] = diffS + '%';
-        var diffHsl = temp.join(',');
+        tempS[1] = diffS + '%';
+        var diffHsl = tempS.join(',');
         return diffHsl;
     }
 
-    // 计算得分
+    /**
+     * 计算得分
+     * @param  {[type]} level [description]
+     * @return {[type]}       [description]
+     */
     function calcScore(level) {
-        score.innerHTML = level;
+        // 每进阶一级得1分
+        recentScore = level;
+        score.innerHTML = recentScore;
     }
 
     window.onresize = function() {
