@@ -53,7 +53,7 @@ window.onload = function() {
 
     /**
      * 生成格子
-     * @param  {[type]} level [表示进行到第几级，取大于等于1的数]
+     * @param  {[type]} level [表示进阶到第几级，取大于等于1的数]
      * @return {[type]}       [description]
      */
     function initGrid(level) {
