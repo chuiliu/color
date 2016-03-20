@@ -63,8 +63,8 @@ body {
     line-height: 30px;
     -webkit-border-radius: 5px;
             border-radius: 5px;
-    color: #fff;
     text-align: center;
+    color: #fff;
     background-color: #fbb928;
 }
 .game .score {

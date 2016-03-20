@@ -2,7 +2,7 @@ window.onload = function() {
 
     var conf = {
         // 游戏时间
-        totalTime: 60,
+        totalTime: 20,
         // 格子数量规则
         rule: [2, 3, 4, 5, 5, 6, 6, 6, 7, 7, 7, 8],
         // 色块难度，定义9种难度
@@ -47,6 +47,7 @@ window.onload = function() {
         overPanel.style.display = 'none';
         game.style.height = game.clientWidth + 'px';
         time.innerHTML = conf.totalTime;
+        time.style.backgroundColor = '#fbb928';
         score.innerHTML = '0';
     }
 
@@ -109,6 +110,9 @@ window.onload = function() {
         var timeLeft = conf.totalTime;
         timer = setInterval(function() {
             timeLeft--;
+            if (timeLeft < 10) {
+                time.style.backgroundColor = '#ff6060';
+            }
             time.innerHTML = timeLeft;
             if (timeLeft < 0) {
                 clearInterval(timer);
